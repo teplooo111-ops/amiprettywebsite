@@ -45,40 +45,91 @@
 </div>
 
 <script>
-const $=id=>document.getElementById(id),main=$, rec=$, emoji=$, greeting=$, badge=$, start=$, back=$, recText=$, recTitle=$, reminder=$, reminderText=$;
-const dayNames=['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'],fullDay=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+// Получаем элементы
+const main = document.getElementById('main');
+const rec = document.getElementById('rec');
+const emoji = document.getElementById('emoji');
+const greeting = document.getElementById('greeting');
+const badge = document.getElementById('badge');
+const start = document.getElementById('start');
+const back = document.getElementById('back');
+const recText = document.getElementById('recText');
+const recTitle = document.getElementById('recTitle');
+const reminder = document.getElementById('reminder');
+const reminderText = document.getElementById('reminderText');
 
-function getPeriod(h){return h>=6&&h<12?'Утро':h>=20||h<6?'Вечер':'День'}
+const dayNames = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+const fullDay = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
 
-function update(){
-    const n=new Date(),h=n.getHours(),p=getPeriod(h),d=dayNames[n.getDay()],t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
-    emoji.textContent=p==='Утро'?'🌅':'🌇';
-    greeting.textContent=p==='Утро'?'Доброе утро, Александр!':'Добрый вечер, Александр!';
-    badge.textContent=fullDay[n.getDay()]+', '+t;
+function getPeriod(h) {
+    if (h >= 6 && h < 12) return 'Утро';
+    if (h >= 20 || h < 6) return 'Вечер';
+    return 'День';
 }
 
-function showRec(){
-    const n=new Date(),h=n.getHours(),p=getPeriod(h),d=dayNames[n.getDay()];
-    let text='';
-    if(p==='Вечер'){
-        reminder.style.display='block';
-        reminderText.textContent='Лиля выпила зафриллу? Если нет, напомните ей.';
-    }else reminder.style.display='none';
-    if(d==='ПН'&&p==='Вечер'||d==='ЧТ'&&p==='Вечер')text='Умойтесь пенкой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите тонкий слой геля Bioderma, дождитесь высыхания, затем одну горошину крема Скиноклир. После высыхания крема по желанию нанесите вновь тонкий слой геля Bioderma.';
-    else if(p==='Утро')text='Умойтесь пенкой или водой. Нанесите легкий слой СПФ на лицо, руки.';
-    else text='Умойтесь пенкой или водой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите увлажняющий крем или сыворотку.';
-    recText.textContent=text;
-    recTitle.textContent=p==='Утро'?'🌅 Утренний уход':'🌙 Вечерний уход';
+function update() {
+    const now = new Date();
+    const h = now.getHours();
+    const p = getPeriod(h);
+    const d = now.getDay();
+    const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    
+    emoji.textContent = p === 'Утро' ? '🌅' : '🌇';
+    greeting.textContent = p === 'Утро' ? 'Доброе утро, Александр!' : 'Добрый вечер, Александр!';
+    badge.textContent = fullDay[d] + ', ' + t;
+}
+
+function showRec() {
+    const now = new Date();
+    const h = now.getHours();
+    const p = getPeriod(h);
+    const d = dayNames[now.getDay()];
+    
+    let text = '';
+    
+    // Напоминание про Лили только вечером
+    if (p === 'Вечер') {
+        reminder.style.display = 'block';
+        reminderText.textContent = 'Лиля выпила зафриллу? Если нет, напомните ей.';
+    } else {
+        reminder.style.display = 'none';
+    }
+    
+    // Рекомендации
+    if ((d === 'ПН' || d === 'ЧТ') && p === 'Вечер') {
+        text = 'Умойтесь пенкой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите тонкий слой геля Bioderma, дождитесь высыхания, затем одну горошину крема Скиноклир. После высыхания крема по желанию нанесите вновь тонкий слой геля Bioderma.';
+    } else if (p === 'Утро') {
+        text = 'Умойтесь пенкой или водой. Нанесите легкий слой СПФ на лицо, руки.';
+    } else {
+        text = 'Умойтесь пенкой или водой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите увлажняющий крем или сыворотку.';
+    }
+    
+    recText.textContent = text;
+    recTitle.textContent = p === 'Утро' ? '🌅 Утренний уход' : '🌙 Вечерний уход';
+    
     main.classList.remove('active');
     rec.classList.add('active');
 }
 
-function goHome(){rec.classList.remove('active');main.classList.add('active');update()}
+function goHome() {
+    rec.classList.remove('active');
+    main.classList.add('active');
+    update();
+}
 
-start.onclick=showRec;
-back.onclick=goHome;
+// Назначаем обработчики
+start.onclick = showRec;
+back.onclick = goHome;
+
+// Инициализация
 update();
-setInterval(()=>{if(main.classList.contains('active'))update()},60000);
+
+// Обновляем время каждую минуту
+setInterval(function() {
+    if (main.classList.contains('active')) {
+        update();
+    }
+}, 60000);
 </script>
 </body>
 </html>
