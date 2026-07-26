@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уход</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f5f5f5;font-family:system-ui,sans-serif;padding:20px}
+        .container{max-width:500px;width:100%;background:#fff;border-radius:24px;padding:40px 30px;box-shadow:0 4px 20px rgba(0,0,0,0.06);text-align:center}
+        h1{font-size:2rem;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+        .time{font-size:.9rem;color:#888;margin-bottom:24px}
+        .btn{background:#1a1a1a;color:#fff;border:none;padding:14px 40px;border-radius:40px;font-size:1.1rem;cursor:pointer;transition:.2s;width:100%}
+        .btn:hover{background:#333}
+        .btn-back{background:#e8e8e8;color:#1a1a1a}
+        .btn-back:hover{background:#d0d0d0}
+        .page{display:none;flex-direction:column;gap:20px}
+        .page.active{display:flex}
+        .card{background:#f8f8f8;border-radius:16px;padding:24px 20px;text-align:left;line-height:1.6;color:#333;font-size:.95rem;white-space:pre-line}
+        .card h2{font-size:1.2rem;font-weight:500;margin-bottom:10px;text-align:center}
+        .reminder{background:#fff3cd;border-left:3px solid #ffc107;padding:12px 16px;border-radius:8px;font-size:.9rem;color:#856404;display:none}
+        .emoji{font-size:2.8rem;margin-bottom:4px}
+        @media(max-width:480px){.container{padding:30px 20px}h1{font-size:1.6rem}}
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Главная -->
+    <div id="main" class="page active">
+        <div class="emoji" id="emoji">🌅</div>
+        <h1 id="greeting">Доброе утро, Александр!</h1>
+        <div class="time" id="badge">ПН, 10:30</div>
+        <button class="btn" id="start">Начать</button>
+    </div>
+
+    <!-- Рекомендации -->
+    <div id="rec" class="page">
+        <div class="card">
+            <h2 id="recTitle">📋 Рекомендация</h2>
+            <p id="recText"></p>
+            <div class="reminder" id="reminder">⚠️ <span id="reminderText"></span></div>
+        </div>
+        <button class="btn btn-back" id="back">Назад</button>
+    </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),main=$, rec=$, emoji=$, greeting=$, badge=$, start=$, back=$, recText=$, recTitle=$, reminder=$, reminderText=$;
+const dayNames=['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'],fullDay=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+
+function getPeriod(h){return h>=6&&h<12?'Утро':h>=20||h<6?'Вечер':'День'}
+
+function update(){
+    const n=new Date(),h=n.getHours(),p=getPeriod(h),d=dayNames[n.getDay()],t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');
+    emoji.textContent=p==='Утро'?'🌅':'🌇';
+    greeting.textContent=p==='Утро'?'Доброе утро, Александр!':'Добрый вечер, Александр!';
+    badge.textContent=fullDay[n.getDay()]+', '+t;
+}
+
+function showRec(){
+    const n=new Date(),h=n.getHours(),p=getPeriod(h),d=dayNames[n.getDay()];
+    let text='';
+    if(p==='Вечер'){
+        reminder.style.display='block';
+        reminderText.textContent='Лиля выпила зафриллу? Если нет, напомните ей.';
+    }else reminder.style.display='none';
+    if(d==='ПН'&&p==='Вечер'||d==='ЧТ'&&p==='Вечер')text='Умойтесь пенкой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите тонкий слой геля Bioderma, дождитесь высыхания, затем одну горошину крема Скиноклир. После высыхания крема по желанию нанесите вновь тонкий слой геля Bioderma.';
+    else if(p==='Утро')text='Умойтесь пенкой или водой. Нанесите легкий слой СПФ на лицо, руки.';
+    else text='Умойтесь пенкой или водой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите увлажняющий крем или сыворотку.';
+    recText.textContent=text;
+    recTitle.textContent=p==='Утро'?'🌅 Утренний уход':'🌙 Вечерний уход';
+    main.classList.remove('active');
+    rec.classList.add('active');
+}
+
+function goHome(){rec.classList.remove('active');main.classList.add('active');update()}
+
+start.onclick=showRec;
+back.onclick=goHome;
+update();
+setInterval(()=>{if(main.classList.contains('active'))update()},60000);
+</script>
+</body>
+</html>
