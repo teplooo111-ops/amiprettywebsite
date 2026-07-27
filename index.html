@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Уход</title>
+    <title>Beauty Routine</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f5f5f5;font-family:system-ui,sans-serif;padding:20px}
@@ -58,7 +58,8 @@ const fullDay = ['Воскресенье','Понедельник','Вторни
 
 function getPeriod(h) {
     if (h >= 6 && h < 12) return 'Утро';
-    if (h >= 20 || h < 6) return 'Вечер';
+    if (h >= 20 && h < 2) return 'Вечер';
+    if (h >= 12 && h < 20) return 'День';
     return 'День';
 }
 
@@ -68,7 +69,7 @@ function update() {
     const p = getPeriod(h);
     const d = now.getDay();
     const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-    greeting.textContent = p === 'Утро' ? 'Доброе утро, Александр!' : 'Добрый вечер, Александр!';
+    greeting.textContent = p === 'Утро' ? 'Доброе утро, Александр!' : p === 'День' ? 'Добрый день, Александр!' : 'Добрый вечер, Александр!';
     badge.textContent = fullDay[d] + ', ' + t;
 }
 
@@ -91,12 +92,14 @@ function showRec() {
         text = 'Умойтесь пенкой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите тонкий слой геля Bioderma, дождитесь высыхания, затем одну горошину крема Скиноклир. После высыхания крема по желанию нанесите вновь тонкий слой геля Bioderma.';
     } else if (p === 'Утро') {
         text = 'Умойтесь пенкой или водой. Нанесите легкий слой СПФ на лицо, руки.';
+    } else if (p === 'День') {
+        text = 'Сейчас день. Умываться или наносить уход не нужно!';
     } else {
         text = 'Умойтесь пенкой или водой. Если наносили днем СПФ - умойтесь гидрофилкой. Нанесите увлажняющий крем или сыворотку.';
     }
     
     recText.textContent = text;
-    recTitle.textContent = p === 'Утро' ? '🌅 Утренний уход' : '🌙 Вечерний уход';
+    recTitle.textContent = p === 'Утро' ? '🌅 Утренний уход' : p === 'День' ? 'Прекрасного дня' : '🌙 Вечерний уход';
     
     main.classList.remove('active');
     rec.classList.add('active');
