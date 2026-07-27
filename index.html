@@ -26,6 +26,7 @@
 <body>
 <div class="container">
     <div id="main" class="page active">
+        <div class="emoji" id="emoji">🌅</div>
         <h1 id="greeting">Доброе утро, Александр!</h1>
         <div class="time" id="badge">ПН, 10:30</div>
         <button class="btn" id="start">Начать</button>
@@ -57,8 +58,8 @@ const dayNames = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
 const fullDay = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
 
 function getPeriod(h) {
+    if (h >= 20 || h < 6) return 'Вечер';
     if (h >= 6 && h < 12) return 'Утро';
-    if (h >= 20 && h < 2) return 'Вечер';
     if (h >= 12 && h < 20) return 'День';
     return 'День';
 }
@@ -69,6 +70,10 @@ function update() {
     const p = getPeriod(h);
     const d = now.getDay();
     const t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    if (p === 'Утро') emoji.textContent = '🌅';
+    else if (p === 'День') emoji.textContent = '☀️';
+    else emoji.textContent = '🌇';
+    
     greeting.textContent = p === 'Утро' ? 'Доброе утро, Александр!' : p === 'День' ? 'Добрый день, Александр!' : 'Добрый вечер, Александр!';
     badge.textContent = fullDay[d] + ', ' + t;
 }
